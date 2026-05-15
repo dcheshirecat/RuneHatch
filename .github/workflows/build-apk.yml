@@ -51,10 +51,9 @@ jobs:
       - name: Build debug APK
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon --max-workers 2 -Dorg.gradle.jvmargs="-Xmx4g" -Dkotlin.daemon.jvm.options="-Xmx2g"
+          ./gradlew assembleDebug --no-daemon --max-workers 2 --info 2>&1 | tail -100
         env:
           JAVA_TOOL_OPTIONS: "-Xmx4g"
-
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
