@@ -3,7 +3,7 @@ name: Build Android APK
 on:
   push:
     branches: [main]
-  workflow_dispatch: # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 11
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
@@ -48,13 +48,13 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle-wrapper.properties') }}
+          key: gradle-${{ hashFiles('android/**/*.gradle*') }}
           restore-keys: gradle-
 
       - name: Build debug APK
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon --max-workers 2 -Dorg.gradle.jvmargs="-Xmx4g"
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
