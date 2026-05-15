@@ -19,14 +19,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Setup Java (required for Gradle)
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 11
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+          java-version: 17
 
       - name: Install dependencies
         run: npm install
@@ -54,7 +51,9 @@ jobs:
       - name: Build debug APK
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon --max-workers 2 -Dorg.gradle.jvmargs="-Xmx4g"
+          ./gradlew assembleDebug --no-daemon --max-workers 2 -Dorg.gradle.jvmargs="-Xmx4g" -Dkotlin.daemon.jvm.options="-Xmx2g"
+        env:
+          JAVA_TOOL_OPTIONS: "-Xmx4g"
 
       - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
