@@ -30,12 +30,13 @@ jobs:
 
       - name: Generate debug keystore
         run: |
+          mkdir -p android/app
           keytool -genkeypair -v \
             -keystore android/app/debug.keystore \
             -alias androiddebugkey \
             -keyalg RSA -keysize 2048 -validity 10000 \
             -storepass android -keypass android \
-            -dname "CN=Android Debug,O=Android,C=US"
+            -dname "CN=Android Debug,O=Android,C=US"C=US"
 
       - name: Make Gradle wrapper executable
         run: chmod +x android/gradlew
