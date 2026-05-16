@@ -3,7 +3,6 @@ import {
   View, Text, TouchableOpacity, StyleSheet,
   Dimensions, Animated, StatusBar,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import {REGIONS, PLAYER_STATS} from '../data/gameData';
 
 const {width, height} = Dimensions.get('window');
@@ -19,6 +18,7 @@ function RegionNode({region, onPress, isSelected}: any) {
       ])
     ).start();
   }, []);
+
   return (
     <TouchableOpacity
       style={[styles.regionNode, {left: region.x * width - 20, top: region.y * MAP_HEIGHT - 20}]}
@@ -31,7 +31,10 @@ function RegionNode({region, onPress, isSelected}: any) {
           transform: [{scale: pulseAnim.interpolate({inputRange: [0, 1], outputRange: [1, 2.2]})}],
         }]} />
       )}
-      <View style={[styles.nodeCore, {borderColor: region.locked ? '#ffffff22' : region.color, opacity: region.locked ? 0.4 : 1}]}>
+      <View style={[styles.nodeCore, {
+        borderColor: region.locked ? '#ffffff22' : region.color,
+        opacity: region.locked ? 0.4 : 1,
+      }]}>
         <Text style={styles.nodeIcon}>{region.locked ? '🔒' : '🥚'}</Text>
       </View>
       {isSelected && (
@@ -58,7 +61,6 @@ export default function MapScreen({navigation}: any) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a0710" />
-      <LinearGradient colors={['#1a0a2e', '#0a0710', '#0d1a2e']} style={StyleSheet.absoluteFill} />
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
           <Text style={styles.backBtnText}>← Menu</Text>
@@ -71,26 +73,33 @@ export default function MapScreen({navigation}: any) {
       </View>
       <View style={styles.mapArea}>
         {REGIONS.map(region => (
-          <RegionNode key={region.id} region={region} onPress={handlePress} isSelected={selectedRegion?.id === region.id} />
+          <RegionNode
+            key={region.id}
+            region={region}
+            onPress={handlePress}
+            isSelected={selectedRegion?.id === region.id}
+          />
         ))}
       </View>
       {selectedRegion && (
         <Animated.View style={[styles.detailPanel, {transform: [{translateY: panelY}]}]}>
-          <LinearGradient colors={['transparent', '#0a0710ee', '#0a0710']} style={StyleSheet.absoluteFill} pointerEvents="none" />
           <View style={styles.panelContent}>
             <View style={styles.panelLeft}>
-              <Text style={[styles.panelElement, {color: selectedRegion.color}]}>{selectedRegion.element} Region</Text>
+              <Text style={[styles.panelElement, {color: selectedRegion.color}]}>
+                {selectedRegion.element} Region
+              </Text>
               <Text style={styles.panelName}>{selectedRegion.name}</Text>
               <Text style={styles.panelDesc}>{selectedRegion.description}</Text>
               <Text style={styles.panelEggs}>🥚 {selectedRegion.eggs} eggs found</Text>
             </View>
             <View style={styles.panelRight}>
-              <TouchableOpacity activeOpacity={0.8}>
-                <LinearGradient colors={['#6a0dad', '#9b5de5']} style={styles.exploreBtn} start={{x: 0, y: 0}} end={{x: 1, y: 1}}>
-                  <Text style={styles.exploreBtnText}>EXPLORE</Text>
-                </LinearGradient>
+              <TouchableOpacity style={styles.exploreBtn} activeOpacity={0.8}>
+                <Text style={styles.exploreBtnText}>EXPLORE</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setSelectedRegion(null)}>
+              <TouchableOpacity onPress={() => {
+                setSelectedRegion(null);
+                panelAnim.setValue(0);
+              }}>
                 <Text style={styles.dismissText}>Dismiss</Text>
               </TouchableOpacity>
             </View>
@@ -117,7 +126,7 @@ const styles = StyleSheet.create({
   nodeLabel: {position: 'absolute', bottom: 46, backgroundColor: '#0d0920ee', borderWidth: 1, paddingVertical: 6, paddingHorizontal: 10, borderRadius: 2, minWidth: 130, alignItems: 'center'},
   nodeLabelElement: {fontSize: 9, letterSpacing: 2, marginBottom: 2},
   nodeLabelName: {color: '#e8dcc8', fontSize: 13},
-  detailPanel: {position: 'absolute', bottom: 0, left: 0, right: 0, paddingTop: 60, paddingBottom: 36, paddingHorizontal: 24},
+  detailPanel: {position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: '#0a0710ee', paddingTop: 24, paddingBottom: 36, paddingHorizontal: 24},
   panelContent: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end'},
   panelLeft: {flex: 1, marginRight: 16},
   panelRight: {alignItems: 'center', gap: 10},
@@ -125,7 +134,7 @@ const styles = StyleSheet.create({
   panelName: {fontSize: 20, color: '#f0d97a', marginBottom: 6, fontWeight: '700'},
   panelDesc: {fontSize: 13, color: '#a898c8', lineHeight: 19, marginBottom: 8, fontStyle: 'italic'},
   panelEggs: {fontSize: 12, color: '#9898a8'},
-  exploreBtn: {paddingVertical: 13, paddingHorizontal: 24, borderRadius: 2, borderWidth: 1, borderColor: '#c9a0ff33'},
+  exploreBtn: {backgroundColor: '#6a0dad', paddingVertical: 13, paddingHorizontal: 24, borderRadius: 2, borderWidth: 1, borderColor: '#c9a0ff33'},
   exploreBtnText: {color: '#f0e8ff', fontSize: 10, letterSpacing: 2},
-  dismissText: {color: '#ffffff33', fontSize: 12},
+  dismissText: {color: '#ffffff44', fontSize: 12},
 });
