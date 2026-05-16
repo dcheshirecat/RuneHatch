@@ -11,7 +11,6 @@ const MAP_HEIGHT = height - 120;
 
 function RegionNode({region, onPress, isSelected}: any) {
   const pulseAnim = useRef(new Animated.Value(0)).current;
-
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -20,7 +19,6 @@ function RegionNode({region, onPress, isSelected}: any) {
       ])
     ).start();
   }, []);
-
   return (
     <TouchableOpacity
       style={[styles.regionNode, {left: region.x * width - 20, top: region.y * MAP_HEIGHT - 20}]}
@@ -33,10 +31,7 @@ function RegionNode({region, onPress, isSelected}: any) {
           transform: [{scale: pulseAnim.interpolate({inputRange: [0, 1], outputRange: [1, 2.2]})}],
         }]} />
       )}
-      <View style={[styles.nodeCore, {
-        borderColor: region.locked ? '#ffffff22' : region.color,
-        opacity: region.locked ? 0.4 : 1,
-      }]}>
+      <View style={[styles.nodeCore, {borderColor: region.locked ? '#ffffff22' : region.color, opacity: region.locked ? 0.4 : 1}]}>
         <Text style={styles.nodeIcon}>{region.locked ? '🔒' : '🥚'}</Text>
       </View>
       {isSelected && (
@@ -53,7 +48,7 @@ export default function MapScreen({navigation}: any) {
   const [selectedRegion, setSelectedRegion] = useState<any>(null);
   const panelAnim = useRef(new Animated.Value(0)).current;
 
-  const handleRegionPress = (region: any) => {
+  const handlePress = (region: any) => {
     setSelectedRegion(region);
     Animated.spring(panelAnim, {toValue: 1, useNativeDriver: true, tension: 80, friction: 10}).start();
   };
@@ -64,7 +59,6 @@ export default function MapScreen({navigation}: any) {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0a0710" />
       <LinearGradient colors={['#1a0a2e', '#0a0710', '#0d1a2e']} style={StyleSheet.absoluteFill} />
-
       <View style={styles.header}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
           <Text style={styles.backBtnText}>← Menu</Text>
@@ -75,18 +69,11 @@ export default function MapScreen({navigation}: any) {
           <Text style={styles.statText}>⚔️ {PLAYER_STATS.battlesWon}</Text>
         </View>
       </View>
-
       <View style={styles.mapArea}>
         {REGIONS.map(region => (
-          <RegionNode
-            key={region.id}
-            region={region}
-            onPress={handleRegionPress}
-            isSelected={selectedRegion?.id === region.id}
-          />
+          <RegionNode key={region.id} region={region} onPress={handlePress} isSelected={selectedRegion?.id === region.id} />
         ))}
       </View>
-
       {selectedRegion && (
         <Animated.View style={[styles.detailPanel, {transform: [{translateY: panelY}]}]}>
           <LinearGradient colors={['transparent', '#0a0710ee', '#0a0710']} style={StyleSheet.absoluteFill} pointerEvents="none" />
