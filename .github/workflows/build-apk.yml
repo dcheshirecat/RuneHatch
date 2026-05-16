@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build APK (Gradle)
+    name: Build APK (Pure React Native)
     runs-on: ubuntu-latest
 
     steps:
@@ -28,20 +28,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install Expo CLI
-        run: npm install -g expo-cli @expo/cli
-
-      - name: Generate native Android project
-        run: npx expo prebuild --platform android --clean
-        env:
-          CI: 1
-
-      - name: Pin Gradle to 8.0.2
+      - name: Generate debug keystore
         run: |
-          perl -i -pe 's|distributionUrl=.*|distributionUrl=https\\://services.gradle.org/distributions/gradle-8.0.2-all.zip|' \
-            android/gradle/wrapper/gradle-wrapper.properties
-          echo "--- gradle-wrapper.properties ---"
-          cat android/gradle/wrapper/gradle-wrapper.properties
+          keytool -genkeypair -v \
+            -keystore android/app/debug.keystore \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass android -keypass android \
+            -dname "CN=Android Debug,O=Android,C=US"
 
       - name: Make Gradle wrapper executable
         run: chmod +x android/gradlew
@@ -52,8 +46,8 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-802-${{ hashFiles('android/gradle/wrapper/gradle-wrapper.properties') }}
-          restore-keys: gradle-802-
+          key: gradle-rn073-${{ hashFiles('android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-rn073-
 
       - name: Build debug APK
         run: |
