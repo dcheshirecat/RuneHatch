@@ -1,10 +1,12 @@
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
     namespace "com.runehatch"
+
     defaultConfig {
         applicationId "com.runehatch.app"
         minSdk rootProject.ext.minSdkVersion
@@ -12,6 +14,16 @@ android {
         versionCode 1
         versionName "1.0.0"
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -20,6 +32,7 @@ android {
             keyPassword 'android'
         }
     }
+
     buildTypes {
         debug { signingConfig signingConfigs.debug }
         release {
@@ -28,6 +41,7 @@ android {
         }
     }
 }
+
 dependencies {
     implementation("com.facebook.react:react-android:0.73.6")
     implementation("com.facebook.react:hermes-android:0.73.6")
